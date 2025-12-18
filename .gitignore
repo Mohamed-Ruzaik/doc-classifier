@@ -1,0 +1,19 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# OS / IDE
+.vscode/
+.DS_Store
+
+# Data (DO NOT COMMIT)
+data/docs/
+data/ocr_cache/
+uploads/
+
+# Models (optional)
+models/*.pkl
+
+# Logs
+*.log
