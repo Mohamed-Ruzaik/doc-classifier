@@ -155,6 +155,17 @@ models/classifier.pkl
 
 ---
 
+## Usage Notice
+
+This project is open-source under the MIT License.
+
+If you plan to use this project (or a modified version of it) in a
+production, commercial, or large-scale academic system, please consider
+contacting the author first.
+
+Author: Mohamed Ruzaik  
+GitHub: https://github.com/Mohamed-Ruzaik
+
 ## License
 
 MIT License © 2025 Mohamed Ruzaik
