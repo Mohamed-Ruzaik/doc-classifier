@@ -1,13 +1,13 @@
 # Document Classifier (FastAPI + OCR + TF-IDF)
 
-A production-oriented **document classification** system that accepts **PDFs and images**, performs **OCR**, and predicts the **document type** using a **TF-IDF + Logistic Regression** model.
+A production-oriented **document classification system** that accepts **PDFs and images**, performs **OCR**, and predicts the **document type** using a **TF-IDF + Logistic Regression** model.
 
 ---
 
 ## Features
 
-* FastAPI backend with `/classify` endpoint (JSON output)
-* Simple HTML/JavaScript frontend
+* FastAPI backend with `/classify` endpoint (JSON response)
+* Simple HTML + JavaScript frontend
 * OCR pipeline:
 
   * PDFs processed using `pdf2image` + **Poppler**
@@ -19,11 +19,11 @@ A production-oriented **document classification** system that accepts **PDFs and
   * Logistic Regression classifier
 * Prediction confidence score
 * Top-3 class predictions
-* Optional **"unknown"** label using a confidence threshold (recommended for production)
+* Optional **"unknown"** label for low-confidence predictions (recommended)
 
 ---
 
-## Supported Document Classes (RVL-CDIP style)
+## Supported Document Classes
 
 * advertisement
 * budget
@@ -47,17 +47,17 @@ A production-oriented **document classification** system that accepts **PDFs and
 ## Project Structure
 
 ```
-app/        # FastAPI app, OCR pipeline, model loader
-scripts/    # Training scripts (OCR caching + model training)
-models/     # Saved model artifacts (vectorizer + classifier)
-static/     # Frontend (index.html, app.js, styles.css)
+app/        # FastAPI app, OCR logic, model loader
+scripts/    # Training scripts (OCR caching + training)
+models/     # Trained model artifacts
+static/     # Frontend (HTML, JS, CSS)
 uploads/    # Uploaded documents (gitignored)
 data/       # labels.csv, OCR cache, dataset (dataset gitignored)
 ```
 
 ---
 
-## Setup (Windows)
+## Setup (Windows – Local Run)
 
 ### 1. Create Virtual Environment and Install Dependencies
 
@@ -77,17 +77,9 @@ pip install -r requirements.txt
 
 #### Poppler
 
-* Required for PDF to image conversion (`pdf2image`)
+* Required for PDF-to-image conversion (`pdf2image`)
 
-After installation, update paths in the following files:
-
-* `app/ocr.py`
-* `scripts/train_text_classifier.py`
-
-Set:
-
-* `TESSERACT_EXE`
-* `POPPLER_BIN`
+Ensure both tools are available in your **system PATH**, or configure their paths directly in the training and OCR scripts.
 
 ---
 
@@ -99,10 +91,10 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 ### Access URLs
 
-* Swagger UI:
+* **Swagger UI**:
   [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
-* Frontend:
+* **Frontend UI**:
   [http://127.0.0.1:8000/static/index.html](http://127.0.0.1:8000/static/index.html)
 
 ---
@@ -113,7 +105,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 ### Expected Dataset Layout
 
-```
+```bash
 data/docs/<class_name>/**
 ```
 
@@ -135,13 +127,49 @@ python scripts/train_text_classifier.py
 
 ---
 
-## Generated Model Artifacts
+## Model Artifacts
 
-After training, the following files are saved:
+After training, the following files are created:
 
-```
+```bash
 models/tfidf_vectorizer.pkl
 models/classifier.pkl
+```
+
+---
+
+## Run with Docker (Recommended)
+
+### Build the Image
+
+```bash
+docker build -t doc-classifier .
+```
+
+### Run the Container
+
+```bash
+docker run -p 8000:8000 doc-classifier
+```
+
+### Open
+
+* [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+* [http://127.0.0.1:8000/static/index.html](http://127.0.0.1:8000/static/index.html)
+
+---
+
+## Optional OCR Configuration
+
+You can control PDF OCR behavior using environment variables:
+
+* `PDF_MAX_PAGES` (default: `2`)
+* `PDF_DPI` (default: `220`)
+
+### Example
+
+```bash
+docker run -p 8000:8000 -e PDF_MAX_PAGES=1 doc-classifier
 ```
 
 ---
@@ -150,23 +178,26 @@ models/classifier.pkl
 
 * Do **NOT** commit the dataset (`data/docs/`) to GitHub
 * Do **NOT** commit OCR cache (`data/ocr_cache/`)
-* For multi-page PDFs, OCR only the **first 2 pages** for better performance
-* Using an **"unknown"** class for low-confidence predictions improves real-world reliability
+* OCR only the first **2 pages** of PDFs for performance
+* Using an **"unknown"** label for low-confidence predictions improves real-world reliability
 
 ---
 
 ## Usage Notice
 
-This project is open-source under the MIT License.
+This project is open-source under the **MIT License**.
 
-If you plan to use this project (or a modified version of it) in a
-production, commercial, or large-scale academic system, please consider
-contacting the author first.
+If you plan to use this project (or a modified version of it) in a **production**, **commercial**, or **large-scale academic** system, please consider contacting the author first.
 
-Author: Mohamed Ruzaik  
-GitHub: https://github.com/Mohamed-Ruzaik
+---
+
+## Author
+
+**Mohamed Ruzaik**
+GitHub: [https://github.com/Mohamed-Ruzaik](https://github.com/Mohamed-Ruzaik)
+
+---
 
 ## License
 
 MIT License © 2025 Mohamed Ruzaik
-
